@@ -1,4 +1,4 @@
-# cal for Mega65
+# cal(endar) for Mega65
 A simple calendar for the Mega65 developed with the Eleven Development Environment [https://github.com/MEGA65/eleven](https://github.com/MEGA65/eleven).
 
 ## Files
