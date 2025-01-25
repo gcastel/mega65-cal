@@ -67,7 +67,7 @@ goto mainloop
 sys 65381
 scnclr
 color 14
-print "Perpetual Calendar for MEGA65 v1.0 by Gerben CASTEL, 2025"
+print "perpetual calendar for mega65 v1.0 by gerben castel, 2025"
 color 1
 end
 
@@ -85,9 +85,12 @@ cursor SELECTBOXX,SELECTBOXY+i
 print "{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}"
 
 window SELECTBOXX+2,SELECTBOXY+2,SELECTBOXX+22,SELECTBOXY+8
+.monthinputloop
+'--------------
 input "MONTH";month
+if month > 12 then print "  UNKNOWN MONTH !":goto monthinputloop
+if month < 1 then print "  UNKNOWN MONTH !":goto monthinputloop
 input "YEAR";year
-'TODO: Sanitize input (month between 1 and 12 only)
 window 0,0,39,24
 return
 
@@ -121,7 +124,7 @@ color 18:print year;
 color 1:print " =="
 
 cursor 0,6
-print "      dim lun mar mer jeu ven sam"
+print "      sun mon tue wed thu fri sat"
 color 18
 print "     {CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}"
 print
@@ -138,8 +141,6 @@ print "     {CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-
 color 1
 cursor 6,22:print "left/right = prev/next month"
 cursor 6,23:print "g = go to date      q = quit"
-'cursor 8,24:color 14:print "-- Gerben CASTEL 2024 --"
-'color 1
 return
 
 .incdaysifleapyear
