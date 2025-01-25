@@ -18,7 +18,7 @@ Here is a short description of each file of the repository:
 
 ## Note
 Command used to convert **cal.el** to **cal.elpc** :
-'''
+```
 petcat -65 -o cal.elpc -- cal.el
-'''
+```
 (the petcat command is part of the [VICE emulator](https://vice-emu.sourceforge.io) package)
