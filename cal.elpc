@@ -1,0 +1,152 @@
+' -------------------------------
+' Perpetual Calendar
+' M65 version, Gerben Castel 2025
+' -------------------------------
+#declare currentmonth
+#declare currentyear
+#declare highlightday
+#declare d
+#declare day
+#declare nbdays
+#declare i
+#declare key$
+#declare month
+#declare rtcaddr
+#declare t
+#declare year
+
+#define SELECTBOXX=8
+#define SELECTBOXY=8
+
+.textmodeinit
+'------------
+'if we are in 80 cols, 
+'switch to 40 cols with sys65381
+i=rwindow(2)
+if i=80 then sys 65381
+background 6
+scnclr
+
+.findcurrentdate
+'---------------
+' Read RTC (loosely based on the M65 manual)
+rtcaddr=$ffd7113
+for i=0 to 2
+  t(i)=peek(rtcaddr+i)
+next i
+
+' RTC internal representation is BCD 
+currentyear = val(hex$(t(2)+$2000))
+currentmonth = val(hex$(t(1)))
+day = val(hex$(t(0)))
+
+year = currentyear
+month = currentmonth
+
+.mainloop
+'--------
+' Mike Keith's Algorithm: find the day of the week 
+' for the first day of the month
+i=year+(month < 3)
+d=int(23*month/9)+3-(2*(month<3))+year+int(i/4)-int(i/100)+int(i/400)
+d=int(mod(d,7))
+
+nbdays = 31 + (month = 4 or month = 6 or month = 9 or month = 11) + (month = 2) * 3
+if (month = 2) then gosub incdaysifleapyear 
+
+gosub display
+getkey key$
+if key$="Q" or key$="q" then goto exit
+if key$="G" or key$="g" then gosub selectdate
+if key$=chr$(157) then gosub previousmonth
+if key$=chr$(29) then gosub nextmonth
+goto mainloop
+
+.exit
+'----
+sys 65381
+scnclr
+color 14
+print "Perpetual Calendar for MEGA65 v1.0 by Gerben CASTEL, 2025"
+color 1
+end
+
+
+'======= SUBROUTINES ========
+.selectdate
+'----------
+cursor SELECTBOXX,SELECTBOXY
+print "{CBM-@}{CBM-@}{CBM-@}{CBM-@}{CBM-@}{CBM-@}{CBM-@}{CBM-@}{CBM-@}{CBM-@}{CBM-@}{CBM-@}{CBM-@}{CBM-@}{CBM-@}{CBM-@}{CBM-@}{CBM-@}{CBM-@}{CBM-@}{CBM-@}{CBM-@}{CBM-@}{CBM-@}"
+for i=1 to 8
+  cursor SELECTBOXX,SELECTBOXY+i
+  print "{CBM-K}                      {CBM-L}"
+next i
+cursor SELECTBOXX,SELECTBOXY+i
+print "{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}"
+
+window SELECTBOXX+2,SELECTBOXY+2,SELECTBOXX+22,SELECTBOXY+8
+input "MONTH";month
+input "YEAR";year
+'TODO: Sanitize input (month between 1 and 12 only)
+window 0,0,39,24
+return
+
+.nextmonth
+'---------
+month=month+1
+if month=13 then begin
+  month=1
+  year=year+1
+bend
+return
+
+.previousmonth
+'-------------
+month=month-1
+if month=0 then begin
+  month=12
+  year=year-1
+bend
+return
+
+.display
+'-------
+scnclr
+cursor 0,3
+color 1
+print "           == "; 
+color 18:print month;
+color 1:print "/";
+color 18:print year;
+color 1:print " =="
+
+cursor 0,6
+print "      dim lun mar mer jeu ven sam"
+color 18
+print "     {CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}"
+print
+color 1
+highlightday=(currentyear=year) and (currentmonth=month)
+for i = 1 to nbdays
+    if (i = day) and highlightday then color 10
+    print tab(4 * (d + i - 1) + 6); i;
+    if (i = day) and highlightday then color 1
+    if (d + i - 1 = 6) or (i=nbdays) then print:print: d = d - 7
+next i
+color 18
+print "     {CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}{CBM-I}"
+color 1
+cursor 6,22:print "left/right = prev/next month"
+cursor 6,23:print "g = go to date      q = quit"
+'cursor 8,24:color 14:print "-- Gerben CASTEL 2024 --"
+'color 1
+return
+
+.incdaysifleapyear
+'-----------------
+' "year" is a leap year if multiple of 4 but not multiple of 100
+' unless it's a multiple of 400 
+if mod(year,400)=0 then nbdays=nbdays+1:return
+if mod(year,100)=0 then return
+if mod(year,4)=0 then nbdays=nbdays+1:return
+return
