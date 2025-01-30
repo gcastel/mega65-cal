@@ -20,10 +20,10 @@
 
 .textmodeinit
 '------------
-'if we are in 80 cols, 
-'switch to 40 cols with sys65381
-i=rwindow(2)
-if i=80 then sys 65381
+'switch to 40 cols
+'(thanks to ToneDeF on the mega65 discord for the tip)
+print chr$(27)"4"
+
 background 6
 scnclr
 
@@ -64,10 +64,12 @@ goto mainloop
 
 .exit
 '----
-sys 65381
+
+'switch back to 80 cols
+print chr$(27)"8"
 scnclr
 color 14
-print "perpetual calendar for mega65 v1.0 by gerben castel, 2025"
+print "perpetual calendar for mega65 v1.01 by gerben castel, 2025"
 color 1
 end
 
