@@ -69,7 +69,7 @@ goto mainloop
 print chr$(27)"8"
 scnclr
 color 14
-print "perpetual calendar for mega65 v1.01 by gerben castel, 2025"
+print "perpetual calendar for mega65 v1.1 by gerben castel, 2025"
 color 1
 end
 
