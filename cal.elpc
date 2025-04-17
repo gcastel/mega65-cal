@@ -69,7 +69,7 @@ goto mainloop
 print chr$(27)"8"
 scnclr
 color 14
-print "perpetual calendar for mega65 v1.1 by gerben castel, 2025"
+print "perpetual calendar for mega65 v1.2 by gerben castel, 2025"
 color 1
 end
 
@@ -89,10 +89,10 @@ print "{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CBM-T}{CB
 window SELECTBOXX+2,SELECTBOXY+2,SELECTBOXX+22,SELECTBOXY+8
 .monthinputloop
 '--------------
-input "MONTH";month
-if month > 12 then print "  UNKNOWN MONTH !":goto monthinputloop
-if month < 1 then print "  UNKNOWN MONTH !":goto monthinputloop
-input "YEAR";year
+input "month";month
+if month > 12 then print "  unknown month !":goto monthinputloop
+if month < 1 then print "  unknown month !":goto monthinputloop
+input "year";year
 window 0,0,39,24
 return
 
